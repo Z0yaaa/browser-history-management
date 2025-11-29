@@ -53,11 +53,22 @@ public:
             head = tail = current = newPage;
         } 
         else {
+            // FIX: Properly detach and safely delete forward history
             if (current->next != nullptr) {
-                deleteForward(current->next);
+                Node* forwardStart = current->next;
+
+                // Detach the forward nodes from current
                 current->next = nullptr;
+                forwardStart->prev = nullptr;
+
+                // Now safely delete the detached chain
+                deleteForward(forwardStart);
+
+                // Update tail after deletion
+                tail = current;
             }
 
+            // Add the new page normally
             current->next = newPage;
             newPage->prev = current;
             tail = newPage;
